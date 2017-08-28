@@ -13,26 +13,34 @@ let util = {};
 })(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
 
 //职责链
-util.Chain = function (fn) {
-    this.fn = fn;
-    this.successor = null;
-}
+util.Chain = (
+    function () {
+        let Chain = function (fn) {
+            if (!(this instanceof Chain)) {
+                return new Chain(fn);
+            }
+            this.fn = fn;
+            this.successor = null;
+        };
 
-util.Chain.prototype.setNextSuccessor = function (successor) {
-    //设置下一个节点
-    return this.successor = successor;
-}
+        Chain.prototype.setNext = function (successor) {
+            return this.successor = successor;
+        }
+        Chain.prototype.run = function () {
+            //第一次传参时
+            if (!Chain.args) {
+                Chain.args = Array.prototype.slice.call(arguments);
+            }
+            let arr = Array.prototype.concat.call(Chain.args, this.next.bind(this));
+            console.log(arr);
+            return this.fn.apply(this, arr);
+        }
+        Chain.prototype.next = function () {
+            return this.successor && this.successor.run.apply(this.successor, arguments);
+        }
+        return Chain;
+    }
+)();
 
-util.Chain.prototype.passRequest = function () {
-
-    //执行当前节点
-    let ret = this.fn.apply(this, arguments, this.next);
-    return ret;
-};
-
-util.Chain.prototype.next = function () {
-    //执行下一个节点
-    return this.successor && this.successor.passRequest.apply(this.successor, arguments);
-}
 
 export default util;

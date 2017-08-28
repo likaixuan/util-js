@@ -77,15 +77,46 @@ let util = {};
 //类型检测 is···
 (function (util, arr) {
     let type = "";
-    for ( let i = 0, type; type = arr[i++]; ) {
+    for (let i = 0, type; type = arr[i++];) {
         util['is' + type] = function (obj) {
-            return Object.prototype.toString.call(obj) === '[object '+type+']';
+            return Object.prototype.toString.call(obj) === '[object ' + type + ']';
         }
     }
 
-})(util, ['String', 'Array', 'Number','Object','Function','Null','Undefined']);
+})(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
 
-/* unused harmony default export */ var _unused_webpack_default_export = (util);
+//职责链
+util.Chain = (
+    function () {
+        let Chain = function (fn) {
+            if (!(this instanceof Chain)) {
+                return new Chain(fn);
+            }
+            this.fn = fn;
+            this.successor = null;
+        };
+
+        Chain.prototype.setNext = function (successor) {
+            return this.successor = successor;
+        }
+        Chain.prototype.run = function () {
+            //第一次传参时
+            if (!Chain.args) {
+                Chain.args = Array.prototype.slice.call(arguments);
+            }
+            let arr = Array.prototype.concat.call(Chain.args, this.next.bind(this));
+            console.log(arr);
+            return this.fn.apply(this, arr);
+        }
+        Chain.prototype.next = function () {
+            return this.successor && this.successor.run.apply(this.successor, arguments);
+        }
+        return Chain;
+    }
+)();
+
+
+/* harmony default export */ __webpack_exports__["a"] = (util);
 
 /***/ }),
 /* 1 */
@@ -97,6 +128,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
+//测试职责链
+
+let order500 = function (orderType, pay, stock, next) {
+    // console.log(next,555);
+    if (orderType === 1 && pay === true) {
+        console.log("交过五百定金");
+    } else {
+        console.log("三秒后出结果");
+        setTimeout(next,3000);
+
+    }
+}
+let order200 = function (orderType, pay, stock, next) {
+    if (orderType === 2 && pay === true) {
+        console.log("交过二百定金");
+    } else {
+        next();
+    }
+}
+let orderNormal = function (orderType, pay,stock) {
+    if (stock > 0) {
+        console.log("没交过定金");
+    } else {
+        console.log('手机库存不足');
+    }
+}
+var a500 = __WEBPACK_IMPORTED_MODULE_0__util_js__["a" /* default */].Chain(order500),
+    a200 = __WEBPACK_IMPORTED_MODULE_0__util_js__["a" /* default */].Chain(order200),
+    aNormal = __WEBPACK_IMPORTED_MODULE_0__util_js__["a" /* default */].Chain(orderNormal);
+a500.setNext(a200).setNext(aNormal);
+a500.run(3, true, 500);
 
 /***/ })
 /******/ ]);

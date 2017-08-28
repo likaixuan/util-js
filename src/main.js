@@ -1,19 +1,35 @@
 import  util from './util.js';
 
-console.dir(util);
-
-console.log('util.isArray(true)',util.isArray(true));
-console.log('util.isArray([])',util.isArray([]));
-console.log('util.isArray(str)',util.isArray("str"));
-console.log('util.isObject({})',util.isObject({}));
-console.log('util.isObject([])',util.isObject([]));
-
-console.log('util.isNumber(11)',util.isNumber(11));
-console.log('util.isNumber(true)',util.isNumber(true));
-console.log('util.isNumber("ddd")',util.isNumber("ddd"));
-
-console.log('util.isFunction("ddd")',util.isFunction("ddd"));
-console.log('util.isFunction(function () {})',util.isFunction(function () {}));
 
 
-console.log('util.isString("ddd")',util.isString("ddd"));
+//测试职责链
+
+let order500 = function (orderType, pay, stock, next) {
+    // console.log(next,555);
+    if (orderType === 1 && pay === true) {
+        console.log("交过五百定金");
+    } else {
+        console.log("三秒后出结果");
+        setTimeout(next,3000);
+
+    }
+}
+let order200 = function (orderType, pay, stock, next) {
+    if (orderType === 2 && pay === true) {
+        console.log("交过二百定金");
+    } else {
+        next();
+    }
+}
+let orderNormal = function (orderType, pay,stock) {
+    if (stock > 0) {
+        console.log("没交过定金");
+    } else {
+        console.log('手机库存不足');
+    }
+}
+var a500 = util.Chain(order500),
+    a200 = util.Chain(order200),
+    aNormal = util.Chain(orderNormal);
+a500.setNext(a200).setNext(aNormal);
+a500.run(3, true, 500);
