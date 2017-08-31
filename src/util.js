@@ -1,7 +1,11 @@
 
 let util = {};
 
-//类型检测 is···
+
+util.has = function (arr, name) {
+    return arr.indexOf(name) > -1;
+}
+
 (function (util, arr) {
     let type = "";
     for (let i = 0, type; type = arr[i++];) {
