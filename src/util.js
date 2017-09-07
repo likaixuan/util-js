@@ -7,13 +7,11 @@ util.has = function (arr, name) {
 }
 
 (function (util, arr) {
-    let type = "";
     for (let i = 0, type; type = arr[i++];) {
         util['is' + type] = function (obj) {
             return Object.prototype.toString.call(obj) === '[object ' + type + ']';
         }
     }
-
 })(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
 
 //职责链
