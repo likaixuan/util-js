@@ -1,4 +1,3 @@
-
 let util = {};
 
 
@@ -6,15 +5,13 @@ util.has = function (arr, name) {
     return arr.indexOf(name) > -1;
 }
 
-    (function (util, arr) {
-        let type = "";
-        for (let i = 0, type; type = arr[i++];) {
-            util['is' + type] = function (obj) {
-                return Object.prototype.toString.call(obj) === '[object ' + type + ']';
-            }
+(function (util, arr) {
+    for (let i = 0, type; type = arr[i++];) {
+        util['is' + type] = function (obj) {
+            return Object.prototype.toString.call(obj) === '[object ' + type + ']';
         }
-
-    })(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
+    }
+})(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
 
 //职责链
 util.Chain = (
