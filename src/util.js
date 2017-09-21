@@ -6,15 +6,15 @@ util.has = function (arr, name) {
     return arr.indexOf(name) > -1;
 }
 
-(function (util, arr) {
-    let type = "";
-    for (let i = 0, type; type = arr[i++];) {
-        util['is' + type] = function (obj) {
-            return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+    (function (util, arr) {
+        let type = "";
+        for (let i = 0, type; type = arr[i++];) {
+            util['is' + type] = function (obj) {
+                return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+            }
         }
-    }
 
-})(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
+    })(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
 
 //职责链
 util.Chain = (
@@ -46,5 +46,21 @@ util.Chain = (
     }
 )();
 
+//节点路径查询
+util.searchTreePath(currentArr, id, idName, pidName, childArrName, path, originalArr) {
+    path = path || []
+    originalArr = originalArr || currentArr
+    currentArr.forEach((item) => {
+        if (item[idName] === id) {
+            path.unshift(item[idName])
+            if (item[pidName]) {
+                this.searchPath(originalArr, item[pidName], idName, pidName, childArrName, path, originalArr)
+            }
+        } else if (item[childArrName]) {
+            this.searchPath(item[childArrName], id, idName, pidName, childArrName, path, originalArr)
+        }
+    })
+    return path;
+}
 
 export default util;
