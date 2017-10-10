@@ -5,13 +5,13 @@ util.has = function (arr, name) {
     return arr.indexOf(name) > -1;
 }
 
-(function (util, arr) {
-    for (let i = 0, type; type = arr[i++];) {
-        util['is' + type] = function (obj) {
-            return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+    (function (util, arr) {
+        for (let i = 0, type; type = arr[i++];) {
+            util['is' + type] = function (obj) {
+                return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+            }
         }
-    }
-})(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
+    })(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
 
 //职责链
 util.Chain = (
@@ -42,6 +42,63 @@ util.Chain = (
         return Chain;
     }
 )();
+
+util.eventBus = {
+    list: {},
+    cached: {},
+    on: function (type, fun) {
+        //绑定事件与回调
+        if (!fun) {
+            return
+        }
+        if (!this.list[type]) {
+            this.list[type] = [];
+        }
+        //将重复过滤
+        this.off(type, fun)
+        this.list[type].push(fun)
+
+        let args = this.cached[type]
+        if (args && Array.isArray(args)) {
+            console.log(this.list['connect'])
+            fun.apply(null, args)
+        }
+
+    },
+    off: function (type, fun) {
+        //解除绑定
+
+        var funArr = this.list[type];
+
+        if (!funArr) {
+            return false;
+        }
+        if (!fun) {
+            this.cached[type] = null;
+            this.list[type] = [];
+        } else {
+            for (var i = 0; i < funArr.length; i++) {
+                if (fun === funArr[i]) {
+                    funArr.splice(i, 1);
+                }
+            }
+        }
+    },
+    emit: function (type) {
+        //触发事件回调
+        var args = Array.prototype.slice.call(arguments, 1);
+        this.cached[type] = args
+        var funArr = this.list[type];
+        if (!funArr) {
+            return false;
+        }
+        for (var i = 0; i < funArr.length; i++) {
+            funArr[i].apply(this, args);
+        }
+
+    }
+
+}
 
 //节点路径查询
 util.searchTreePath(currentArr, id, idName, pidName, childArrName, path, originalArr) {
