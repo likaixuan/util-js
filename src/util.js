@@ -33,7 +33,6 @@ util.Chain = (
                 Chain.args = Array.prototype.slice.call(arguments);
             }
             let arr = Array.prototype.concat.call(Chain.args, this.next.bind(this));
-            console.log(arr);
             return this.fn.apply(this, arr);
         }
         Chain.prototype.next = function () {
@@ -60,7 +59,6 @@ util.eventBus = {
 
         let args = this.cached[type]
         if (args && Array.isArray(args)) {
-            console.log(this.list['connect'])
             fun.apply(null, args)
         }
 
