@@ -135,6 +135,22 @@ util.alertObj = function (obj) {
     alert(str)
 }
 
+/**
+ *
+ @author likaixuan
+ *
+ @date 2016-xxxx
+ * 
+ * 获取外联样式
+ */
+export const getStyle = function getStyle(obj, attr) {
+	if(!!obj.currentStyle) // ie 等
+		{
+			return obj.currentStyle[attr]; // 返回传递过来的某个属性
+		} else {
+			return window.getComputedStyle(obj, null)[attr]; // w3c 浏览器
+		}
+}
 
 /**
  * @author乐意黎 （http://blog.csdn.net/aerchi/article/details/51697592）
