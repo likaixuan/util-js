@@ -135,6 +135,11 @@ util.alertObj = function (obj) {
     alert(str)
 }
 
+// 首字母大写
+util.capitalize =  function (str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 /**
  *
  @author likaixuan
@@ -143,13 +148,13 @@ util.alertObj = function (obj) {
  * 
  * 获取外联样式
  */
-export const getStyle = function getStyle(obj, attr) {
-	if(!!obj.currentStyle) // ie 等
-		{
-			return obj.currentStyle[attr]; // 返回传递过来的某个属性
-		} else {
-			return window.getComputedStyle(obj, null)[attr]; // w3c 浏览器
-		}
+util.getStyle = function (obj, attr) {
+	if(!!obj.currentStyle) {
+		// ie 等 
+		return obj.currentStyle[attr]; // 返回传递过来的某个属性
+	} else {
+		return window.getComputedStyle(obj, null)[attr]; // w3c 浏览器
+	}
 }
 
 /**
