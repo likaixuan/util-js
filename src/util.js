@@ -140,6 +140,73 @@ util.capitalize =  function (str) {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+util.date = {
+	cloneDate: function (date) {
+		return new Date(date)
+	},
+	getCurrentMonthFirstDay: function (date) {
+		// date 所在月份第一天
+		date = this.cloneDate(date)
+		return new Date(date.setDate(1))
+	},
+	getCurrentMonthLastDay: function (date) {
+		// date 所在月份最后一天
+		let currentMonth = date.getMonth()
+		let nextMonth = ++currentMonth
+		let nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1)
+		let oneDay = 1000 * 60 * 60 * 24
+		return new Date(nextMonthFirstDay - oneDay)
+	},
+	getCurrentWeekLastDay: function (date) {
+		// date 所在周最后一天
+		date = this.cloneDate(date)
+		let lastDate = date.setDate(date.getDate() + (7 - date.getDay()))
+		return new Date(lastDate)
+	},
+	getCurrentWeekFirstDay: function (date) {
+		// date 所在周第一天
+		date = this.cloneDate(date)
+		let firstDate = date.setDate(date.getDate() - (date.getDay() - 1))
+		return new Date(firstDate)
+	},
+	getNextDay: function (date) {
+		// date 下一天
+		date = this.cloneDate(date)
+		return new Date(date.setDate(date.getDate() + 1))
+	},
+	getPrevDay: function (date) {
+		// date 上一天
+		date = this.cloneDate(date)
+		return new Date(date.setDate(date.getDate() - 1))
+	},
+	getNextWeekFirstDay: function (date) {
+		// date 所在周的下一周的第一天
+		date = this.cloneDate(date)
+		let weekLastDate = this.getCurrentWeekLastDay(date)
+		return new Date(weekLastDate.setDate(weekLastDate.getDate() + 1))
+	},
+	getPrevWeekFirstDay: function (date) {
+		// date 所在周的上一周的第一天
+		date = this.cloneDate(date)
+		let weekFirstDate = this.getCurrentWeekFirstDay(date)
+		return new Date(weekFirstDate.setDate(weekFirstDate.getDate() - 7))
+	},
+	getNextMonthFirstDay: function (date) {
+		// date 所在月的下一月的第一天
+		date = this.cloneDate(date)
+		let monthLastDate = this.getCurrentMonthLastDay(date)
+		return new Date(monthLastDate.setDate(monthLastDate.getDate() + 1))
+	},
+	getPrevMonthFirstDay: function (date) {
+		// date 所在月的上一月的第一天
+		date = this.cloneDate(date)
+		let monthFirstDate = this.getCurrentMonthFirstDay(date)
+		let prevMonthLastDate = new Date(monthFirstDate.setDate(monthFirstDate.getDate() - 1))
+		return this.getCurrentMonthFirstDay(prevMonthLastDate)
+	}
+
+}
+
 /**
  *
  @author likaixuan
