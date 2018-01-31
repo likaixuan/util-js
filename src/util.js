@@ -117,9 +117,6 @@ util.searchTreePath(currentArr, id, idName, pidName, childArrName, path, origina
     return path;
 }
 
-export default util;
-
-
 // 调试信息
 util.log = function () {
     console.log.apply(console, arguments);
@@ -270,3 +267,5 @@ util.getBrowser = function (getVersion) {
 	verStr = (getVersion != undefined) ? browser_chi_Type + "/" + verNum : browser_chi_Type;
 	return verStr;
 }
+
+export default util;
