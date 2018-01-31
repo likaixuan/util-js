@@ -1,19 +1,19 @@
-let util = {};
+let util = {}
 
 
 // 检测包含
 util.has = function (arr, name) {
-    return arr.indexOf(name) > -1;
+    return arr.indexOf(name) > -1
 }
 
 // 类型检测
-(function (util, arr) {
+;(function (util, arr) {
     for (let i = 0, type; type = arr[i++];) {
         util['is' + type] = function (obj) {
-            return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+            return Object.prototype.toString.call(obj) === '[object ' + type + ']'
         }
     }
-})(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined']);
+})(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined'])
 
 
 // 职责链
@@ -21,27 +21,29 @@ util.Chain = (
     function () {
         let Chain = function (fn) {
             if (!(this instanceof Chain)) {
-                return new Chain(fn);
+                return new Chain(fn)
             }
-            this.fn = fn;
-            this.successor = null;
-        };
+            this.fn = fn
+            this.successor = null
+        }
 
         Chain.prototype.setNext = function (successor) {
-            return this.successor = successor;
+            return this.successor = successor
         }
+	
         Chain.prototype.run = function () {
             // 第一次传参时
             if (!Chain.args) {
-                Chain.args = Array.prototype.slice.call(arguments);
+                Chain.args = Array.prototype.slice.call(arguments)
             }
-            let arr = Array.prototype.concat.call(Chain.args, this.next.bind(this));
-            return this.fn.apply(this, arr);
+		
+            let arr = Array.prototype.concat.call(Chain.args, this.next.bind(this))
+            return this.fn.apply(this, arr)
         }
         Chain.prototype.next = function () {
-            return this.successor && this.successor.run.apply(this.successor, arguments);
+            return this.successor && this.successor.run.apply(this.successor, arguments)
         }
-        return Chain;
+        return Chain
     }
 )();
 
@@ -56,7 +58,7 @@ util.eventBus = {
             return
         }
         if (!this.list[type]) {
-            this.list[type] = [];
+            this.list[type] = []
         }
         // 将重复过滤
         this.off(type, fun)
@@ -69,17 +71,17 @@ util.eventBus = {
 
     },
     off: function (type, fun) {
-        var funArr = this.list[type];
+        var funArr = this.list[type]
         if (!funArr) {
-            return false;
+            return false
         }
         if (!fun) {
-            this.cached[type] = null;
-            this.list[type] = [];
+            this.cached[type] = null
+            this.list[type] = []
         } else {
             for (var i = 0; i < funArr.length; i++) {
                 if (fun === funArr[i]) {
-                    funArr.splice(i, 1);
+                    funArr.splice(i, 1)
                 }
             }
         }
@@ -88,12 +90,12 @@ util.eventBus = {
     emit: function (type) {
         var args = Array.prototype.slice.call(arguments, 1);
         this.cached[type] = args
-        var funArr = this.list[type];
+        var funArr = this.list[type]
         if (!funArr) {
-            return false;
+            return false
         }
         for (var i = 0; i < funArr.length; i++) {
-            funArr[i].apply(this, args);
+            funArr[i].apply(this, args)
         }
 
     }
@@ -114,12 +116,12 @@ util.searchTreePath(currentArr, id, idName, pidName, childArrName, path, origina
             this.searchPath(item[childArrName], id, idName, pidName, childArrName, path, originalArr)
         }
     })
-    return path;
+    return path
 }
 
 // 调试信息
 util.log = function () {
-    console.log.apply(console, arguments);
+    console.log.apply(console, arguments)
 }
 
 
@@ -215,10 +217,9 @@ util.date = {
  */
 util.getStyle = function (obj, attr) {
 	if(!!obj.currentStyle) {
-		// ie 等 
-		return obj.currentStyle[attr]; // 返回传递过来的某个属性
+		return obj.currentStyle[attr]
 	} else {
-		return window.getComputedStyle(obj, null)[attr]; // w3c 浏览器
+		return window.getComputedStyle(obj, null)[attr] 
 	}
 }
 
@@ -268,4 +269,4 @@ util.getBrowser = function (getVersion) {
 	return verStr;
 }
 
-export default util;
+export default util
