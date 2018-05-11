@@ -134,6 +134,20 @@ util.alertObj = function (obj) {
     alert(str)
 }
 
+
+// 简易假深拷贝
+export const deepCopy = function (obj, keys = []) {
+    let copyObj = {}
+    if (Array.isArray(keys) && keys.length > 1) {
+        keys.forEach((item) => {
+            copyObj[item] = obj[item]
+        })
+        return JSON.parse(JSON.stringify(copyObj))
+    } else {
+        return JSON.parse(JSON.stringify(obj))
+    }
+}
+
 // 首字母大写
 util.capitalize =  function (str) {
     return str.charAt(0).toUpperCase() + str.slice(1)
@@ -207,14 +221,8 @@ util.date = {
 
 }
 
-/**
- *
- @author likaixuan
- *
- @date 2016-xxxx
- * 
- * 获取外联样式
- */
+
+// 获取外联样式
 util.getStyle = function (obj, attr) {
 	if(!!obj.currentStyle) {
 		return obj.currentStyle[attr]
@@ -228,7 +236,6 @@ util.getStyle = function (obj, attr) {
  * 
  * 获取浏览器信息
  */
-
 util.getBrowser = function (getVersion) {
 	// 注意关键字大小写
 	var ua_str = navigator.userAgent.toLowerCase(), ie_Tridents, trident, match_str, ie_aer_rv, browser_chi_Type;
