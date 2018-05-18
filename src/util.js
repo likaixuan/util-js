@@ -16,38 +16,6 @@ util.has = function (arr, name) {
 })(util, ['String', 'Array', 'Number', 'Object', 'Function', 'Null', 'Undefined'])
 
 
-// 职责链
-util.Chain = (
-    function () {
-        let Chain = function (fn) {
-            if (!(this instanceof Chain)) {
-                return new Chain(fn)
-            }
-            this.fn = fn
-            this.successor = null
-        }
-
-        Chain.prototype.setNext = function (successor) {
-            return this.successor = successor
-        }
-	
-        Chain.prototype.run = function () {
-            // 第一次传参时
-            if (!Chain.args) {
-                Chain.args = Array.prototype.slice.call(arguments)
-            }
-		
-            let arr = Array.prototype.concat.call(Chain.args, this.next.bind(this))
-            return this.fn.apply(this, arr)
-        }
-        Chain.prototype.next = function () {
-            return this.successor && this.successor.run.apply(this.successor, arguments)
-        }
-        return Chain
-    }
-)();
-
-
 // 发布订阅
 util.eventBus = {
     list: {},
@@ -70,8 +38,14 @@ util.eventBus = {
         }
 
     },
+    once(...args) {
+	if (args.length >= 2) {
+	    args[1].once = true
+	    this.on.apply(this, args)
+	}
+    },
     off: function (type, fun) {
-        var funArr = this.list[type]
+        let funArr = this.list[type]
         if (!funArr) {
             return false
         }
@@ -79,7 +53,7 @@ util.eventBus = {
             this.cached[type] = null
             this.list[type] = []
         } else {
-            for (var i = 0; i < funArr.length; i++) {
+            for (let i = 0; i < funArr.length; i++) {
                 if (fun === funArr[i]) {
                     funArr.splice(i, 1)
                 }
@@ -88,16 +62,16 @@ util.eventBus = {
 
     },
     emit: function (type) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        this.cached[type] = args
-        var funArr = this.list[type]
-        if (!funArr) {
-            return false
-        }
-        for (var i = 0; i < funArr.length; i++) {
-            funArr[i].apply(this, args)
-        }
-
+        let args = Array.prototype.slice.call(arguments, 1)
+	this.cached[type] = args
+	let funArr = this.list[type]
+	if (!funArr) {
+	    return false
+	}
+	this.list[type] = funArr.filter((item) => {
+	    item.apply(this, args)
+	    return !item.once
+	})
     }
 
 }
