@@ -108,6 +108,27 @@ util.alertObj = function (obj) {
     alert(str)
 }
 
+// url转对象
+util.urlToObj = function (url) {
+  var json = {};
+  var arr = url.substr(url.indexOf('?') + 1).split('&');
+  arr.forEach(function (item) {
+    var tmp = item.split('=');
+    json[tmp[0]] = tmp[1];
+  })
+  return json;
+}
+
+// 对象转url
+util.objToUrl = function (obj) {
+  obj = obj || {}
+  let str = '?'
+  for (let key in obj) {
+    str += `${key}=${obj[key]}&`
+  }
+  return str.slice(0, -1)
+}
+
 
 // 简易假深拷贝
 export const deepCopy = function (obj, keys = []) {
