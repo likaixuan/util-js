@@ -18,7 +18,7 @@ util.has = function (arr, name) {
 
 // 发布订阅
 util.eventBus = {
-  callbackListMap: {},
+    callbackListMap: {},
     argsCached: {},
     on(type, callback, isCallcache = false) {
 	//绑定事件与回调
@@ -26,7 +26,8 @@ util.eventBus = {
 	    this.callbackListMap[type] = []
 	}
 	this.off(type, callback)
-	if (!callback.once) {
+
+	if (!callback.once || !isCallcache) {
 	    this.callbackListMap[type].push(callback)
 	}
 	// 先发布后订阅
@@ -65,13 +66,12 @@ util.eventBus = {
 	if (!callbackList || callbackList.length === 0) {
 	    return
 	}
-	this.list[type] = callbackList.filter((item) => {
+	this.callbackListMap[type] = callbackList.filter((item) => {
 	    item.apply(this, args)
 	    // 解绑once
 	    return !item.once
 	})
     }
-
 }
 
 // 节点路径查询
