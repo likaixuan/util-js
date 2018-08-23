@@ -18,25 +18,24 @@ util.has = function (arr, name) {
 
 // 发布订阅
 util.eventBus = {
-    list: {},
-    cached: {},
-    on: function (type, fun) {
-        // 绑定事件与回调
-        if (!fun) {
-            return
-        }
-        if (!this.list[type]) {
-            this.list[type] = []
-        }
-        // 将重复过滤
-        this.off(type, fun)
-        this.list[type].push(fun)
-
-        let args = this.cached[type]
-        if (args && Array.isArray(args)) {
-            fun.apply(null, args)
-        }
-
+  callbackListMap: {},
+    argsCached: {},
+    on(type, callback, isCallcache = false) {
+	//绑定事件与回调
+	if (!this.callbackListMap[type]) {
+	    this.callbackListMap[type] = []
+	}
+	this.off(type, callback)
+	if (!callback.once) {
+	    this.callbackListMap[type].push(callback)
+	}
+	// 先发布后订阅
+	if (isCallcache) {
+	    let args = this.argsCached[type]
+	    if (!!args && Array.isArray(args)) {
+		callback.apply(null, args)
+	    }
+	}
     },
     once(...args) {
 	if (args.length >= 2) {
@@ -44,32 +43,31 @@ util.eventBus = {
 	    this.on.apply(this, args)
 	}
     },
-    off: function (type, fun) {
-        let funArr = this.list[type]
-        if (!funArr) {
-            return false
-        }
-        if (!fun) {
-            this.cached[type] = null
-            this.list[type] = []
-        } else {
-            for (let i = 0; i < funArr.length; i++) {
-                if (fun === funArr[i]) {
-                    funArr.splice(i, 1)
-                }
-            }
-        }
-
-    },
-    emit: function (type) {
-        let args = Array.prototype.slice.call(arguments, 1)
-	this.cached[type] = args
-	let funArr = this.list[type]
-	if (!funArr) {
-	    return false
+    off(type, callback) {
+	let callbackList = this.callbackListMap[type]
+	if (!callbackList || callbackList.length === 0) {
+	    return
 	}
-	this.list[type] = funArr.filter((item) => {
+	if (!callback) {
+	    this.argsCached[type] = null
+	    this.callbackListMap[type] = []
+	} else {
+	    const index = callbackList.indexOf(callback)
+	    if (index !== -1) {
+		callbackList.splice(index, 1)
+	    }
+	}
+    },
+    emit(type, ...args) {
+	// 缓存参数
+	this.argsCached[type] = args
+	let callbackList = this.callbackListMap[type]
+	if (!callbackList || callbackList.length === 0) {
+	    return
+	}
+	this.list[type] = callbackList.filter((item) => {
 	    item.apply(this, args)
+	    // 解绑once
 	    return !item.once
 	})
     }
